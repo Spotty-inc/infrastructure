@@ -1,0 +1,10 @@
+secretGenerator:
+- name: music-api
+  envs:
+  - .env.music
+- name: auth-api
+  envs:
+  - .env.auth
+- name: user-api
+  envs:
+  - .env.user

@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api
+spec:
+  type: NodePort
+  selector:
+    app: auth-api
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api
+spec:
+  selector:
+    matchLabels:
+      app: auth-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+      - name: auth-api
+        image: samlangley/auth-api:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: AWS_ACCESS_KEY
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: AWS_SECRET_KEY
+        - name: COGNITO_POOL_ID
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: COGNITO_POOL_ID
+        - name: AWS_REGION_NAME
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: AWS_REGION_NAME
+        - name: APP_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: APP_CLIENT_ID
+        - name: APP_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-api-m26hd6f72c
+              key: APP_CLIENT_SECRET
+        ports:
+        - containerPort: 5000
