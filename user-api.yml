@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api
+spec:
+  type: NodePort
+  selector:
+    app: user-api
+  ports:
+  - protocol: TCP
+    port: 10001
+    targetPort: 10001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+spec:
+  selector:
+    matchLabels:
+      app: user-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      containers:
+      - name: user-api
+        image: samlangley/user-api:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: user-api-4hck5tkd6d
+              key: DB_HOST
+        - name: DB_KEYSPACE
+          valueFrom:
+            secretKeyRef:
+              name: user-api-4hck5tkd6d
+              key: DB_KEYSPACE
+        ports:
+        - containerPort: 10001
